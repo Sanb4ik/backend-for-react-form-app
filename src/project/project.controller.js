@@ -4,6 +4,11 @@ class ProjectController {
   getProjects(req, res) {
     res.json(ProjectService.getProjects());
   }
+
+  getProjectById(req, res) {
+    const id = Number(req.params.id);
+    res.json(ProjectService.getProjectById(id));
+  }
   editProject(req, res) {
     const id = Number(req.params.id);
     const name = req.body;

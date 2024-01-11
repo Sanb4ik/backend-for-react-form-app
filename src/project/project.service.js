@@ -7,11 +7,11 @@ class ProjectService {
         priority: 'High',
         tasks: [
           {
-            name: 'task 1',
+            taskName: 'task 1',
             status: 'Done',
           },
           {
-            name: 'task 2',
+            taskName: 'task 2',
             status: 'Pending',
           },
         ],
@@ -24,29 +24,29 @@ class ProjectService {
         comment: 'another comment',
         tasks: [
           {
-            name: 'task 1',
-            status: 'pending',
+            taskName: 'task 1',
+            status: 'Pending',
           },
           {
-            name: 'task 2',
-            status: 'pending',
+            taskName: 'task 2',
+            status: 'Pending',
           },
         ],
       },
       {
         name: 'vue',
         description: 'intermediate project',
-        priority: 'low',
-        status: 'not started',
+        priority: 'Low',
+        status: 'Pending',
         comment: 'third comment',
         tasks: [
           {
-            name: 'task 1',
-            status: 'not started',
+            taskName: 'task 1',
+            status: 'Pending',
           },
           {
-            name: 'task 2',
-            status: 'not started',
+            taskName: 'task 2',
+            status: 'Pending',
           },
         ],
       },
@@ -62,29 +62,41 @@ class ProjectService {
 
     const updatedProject = { ...projectToUpdate };
 
-    if (updatedData.status) {
-      updatedProject.status = updatedData.status;
-    }
+    Object.keys(updatedData).forEach((key) => {
+      switch (key) {
+        case 'name':
+        case 'description':
+        case 'status':
+        case 'priority':
+        case 'technology':
+        case 'comment':
+          if (updatedData[key]) {
+            updatedProject[key] = updatedData[key];
+          }
+          break;
 
-    if (updatedData.technology) {
-      updatedProject.technology = updatedData.technology;
-    }
-    if (updatedData.comment) {
-      updatedProject.comment = updatedData.comment;
-    }
+        case 'tasks':
+          if (updatedData[key]) {
+            Object.keys(updatedData[key]).forEach((index) => {
+              const taskIndex = Number(index);
+              const task = updatedData[key][index];
 
-    if (updatedData.tasks) {
-      Object.keys(updatedData.tasks).forEach((index) => {
-        const taskIndex = parseInt(index);
-        const task = updatedData.tasks[index];
+              if (taskIndex < updatedProject.tasks?.length) {
+                updatedProject.tasks[taskIndex] = { ...updatedProject.tasks[taskIndex], ...task };
+              } else {
+                updatedProject.tasks.push(task);
+              }
+              if (!task.taskName) {
+                updatedProject.tasks.splice(taskIndex, 1);
+              }
+            });
+          }
+          break;
 
-        if (taskIndex < updatedProject.tasks.length) {
-          updatedProject.tasks[taskIndex] = { ...updatedProject.tasks[taskIndex], ...task };
-        } else {
-          updatedProject.tasks.push(task);
-        }
-      });
-    }
+        default:
+          break;
+      }
+    });
 
     this.projects[id] = updatedProject;
     return updatedProject;
@@ -98,8 +110,14 @@ class ProjectService {
     return this.projects;
   }
 
+  getProjectById(id) {
+    return this.projects[id];
+  }
+
   createProject(project) {
-    this.projects.push(project);
+    this.projects.push({ tasks: [] });
+    const id = this.projects.length - 1;
+    this.updateProject(id, project);
     return this.projects;
   }
 }
