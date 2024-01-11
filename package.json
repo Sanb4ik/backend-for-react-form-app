@@ -6,16 +6,18 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "start": "src/index.js"
   },
   "author": "Alexandr Kuznetsov",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "prettier": "^3.1.1"
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "eslint": "^8.56.0",
+    "nodemon": "^3.0.2",
+    "prettier": "^3.1.1"
   }
 }
